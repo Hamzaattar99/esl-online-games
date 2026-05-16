@@ -1,0 +1,57 @@
+body {
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+}
+
+/* Card */
+.login-card {
+    width: 400px;
+    padding: 30px;
+    border-radius: 18px;
+    background: rgba(17, 24, 39, 0.9);
+    color: white;
+}
+
+/* Icon */
+.login-icon {
+    font-size: 45px;
+    color: #3b82f6;
+}
+
+/* Inputs override */
+.custom-input {
+    background: #0f172a !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: white !important;
+    border-radius: 12px;
+}
+
+.custom-input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: none !important;
+}
+
+/* Button */
+.login-btn {
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Error */
+.text-danger {
+    font-size: 13px;
+}
+
+/* Lock */
+.lock-box {
+    display: none;
+}
+
+.form-control::placeholder {
+    color: #55a1e4; /* أوضح من الافتراضي */
+    opacity: 1;     /* مهم جداً في بعض المتصفحات */
+}
