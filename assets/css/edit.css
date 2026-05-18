@@ -1,0 +1,33 @@
+.edit-page{
+    padding:20px;
+}
+
+.question-card{
+    background:var(--card);
+    padding:15px;
+    border-radius:15px;
+    margin-top:10px;
+    border:1px solid var(--border);
+}
+
+.question-card input{
+    margin-top:8px;
+}
+
+.custom-toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#22c55e;
+    color:white;
+    padding:12px 20px;
+    border-radius:12px;
+    opacity:0;
+    transform:translateY(20px);
+    transition:0.3s;
+}
+
+.custom-toast.show{
+    opacity:1;
+    transform:translateY(0);
+}

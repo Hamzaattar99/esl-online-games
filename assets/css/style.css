@@ -133,3 +133,29 @@ textarea:focus {
         transform: translateY(0);
     }
 }
+
+
+/* --------------------- For the templates and play.php ----------------------------- */
+/* ---------------------------------------------------------------------------------- */
+
+.game-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+button {
+    background: var(--primary);
+    border: none;
+    padding: 10px 15px;
+    color: white;
+    border-radius: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+#progressBar {
+    height: 5px;
+    background: #3b82f6;
+    transition: 0.3s;
+}
