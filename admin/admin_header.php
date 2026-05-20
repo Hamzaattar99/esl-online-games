@@ -1,11 +1,36 @@
+<?php
+
+include '../includes/helpers.php';
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
+
+
+<style>
+
+:root{
+
+    --primary:
+    <?= getSetting('primary_color', '#3b82f6') ?>;
+
+}
+
+</style>
+
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?php echo isset($page_title) ? $page_title : 'Admin Panel'; ?></title>
+    <title>
+            <?= isset($page_title)
+            ? $page_title
+            : getSetting('site_name', 'ESL Games') ?>
+    </title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,7 +57,13 @@
     <aside class="sidebar">
 
         <div class="logo-area">
-            <h3>ESL Games</h3>
+            <h3>
+
+            <?= null !== (getSetting('site_name')) // instead of (isset()) we uses (null !== experssion)
+            ? getSetting('site_name')
+            : "ESL Games" ?>
+
+            </h3>
         </div>
 
         <nav class="sidebar-menu">

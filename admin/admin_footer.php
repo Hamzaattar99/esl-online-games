@@ -1,3 +1,4 @@
+
 </main>
 
 </div>
@@ -7,6 +8,9 @@
 
 <!-- Admin JS -->
 <script src="/assets/js/admin.js"></script>
+
+
+<div id="messageBoxContainer"></div>
 
 </body>
 </html>
