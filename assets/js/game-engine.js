@@ -1,64 +1,85 @@
 class GameEngine {
-    constructor(config) {
+
+    constructor(config){
+
         this.data = config.data || [];
         this.settings = config.settings || {};
 
         this.current = 0;
+
         this.score = 0;
+
         this.correct = 0;
+
         this.wrong = 0;
 
-        this.timer = this.settings.timer || 0;
-        this.interval = null;
+        this.answers = [];
 
-        this.onFinish = config.onFinish || function () {};
+        this.startTime = Date.now();
+
     }
 
-    startTimer(updateUI, finishCallback) {
-        if (!this.timer) return;
+    answer(question, selected, correct){
 
-        let time = this.timer;
+        const isCorrect = selected === correct;
 
-        this.interval = setInterval(() => {
-            time--;
-            updateUI(time);
+        this.answers.push({
+            question,
+            selected,
+            correct,
+            isCorrect
+        });
 
-            if (time <= 0) {
-                clearInterval(this.interval);
-                finishCallback();
-            }
-        }, 1000);
-    }
+        if(isCorrect){
 
-    stopTimer() {
-        clearInterval(this.interval);
-    }
-
-    answer(isCorrect) {
-        if (isCorrect) {
             this.score += 10;
             this.correct++;
-        } else {
+
+        }else{
+
             this.wrong++;
+
         }
 
         this.current++;
+
+        return isCorrect;
+
     }
 
-    progress() {
-        return (this.current / this.data.length) * 100;
+    progress(){
+
+        return (
+            this.current /
+            this.data.length
+        ) * 100;
+
     }
 
-    isFinished() {
-        return this.current >= this.data.length;
-    }
+    result(contentId, playerName){
 
-    result() {
         return {
+
+            content_id: contentId,
+
+            player_name: playerName,
+
             score: this.score,
+
             correct: this.correct,
+
             wrong: this.wrong,
-            total: this.data.length
+
+            total: this.data.length,
+
+            time_taken: Math.floor(
+                (Date.now() - this.startTime) / 1000
+            ),
+
+            answers: this.answers
+
         };
+
     }
+
 }
