@@ -1,38 +1,92 @@
 <?php
 
 $data = json_decode(
-$content['data_json'],
-true
+    $content['data_json'],
+    true
 );
 
-shuffle($data);
+if(!$data || !is_array($data)){
+
+    include 'views/errors/json-error.php';
+    exit;
+}
+
+$cards = [];
+
+foreach($data as $item){
+
+    $cards[] = $item['value'];
+    $cards[] = $item['value'];
+
+}
+
+shuffle($cards);
 
 ?>
 
-<div class="play-page">
+<div class="play-page memory-page">
+
+    <div class="play-topbar">
+
+        <div class="topbar-left">
+
+            <a href="index.php"
+            class="back-btn">
+
+                <i class="bi bi-arrow-left"></i>
+
+            </a>
+
+            <div>
+
+                <div class="game-title">
+                    <?= htmlspecialchars($content['content_title']) ?>
+                </div>
+
+                <div class="game-description">
+                    Match all memory cards
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="topbar-right">
+
+            <div class="timer-box"
+            id="memoryTimer">
+
+                0s
+
+            </div>
+
+        </div>
+
+    </div>
 
     <div class="game-wrapper">
 
         <div class="game-card">
 
-            <h2 class="mb-4">
-                Memory Game
-            </h2>
-
             <div class="memory-grid">
 
-                <?php foreach($data as $card): ?>
+                <?php foreach($cards as $value): ?>
 
-                <div class="memory-card">
+                <div class="memory-card"
+                data-value="<?= $value ?>">
 
                     <div class="memory-inner">
 
                         <div class="memory-front">
-                            ?
+
+                            <i class="bi bi-stars"></i>
+
                         </div>
 
                         <div class="memory-back">
-                            <?= $card['value'] ?>
+
+                            <?= htmlspecialchars($value) ?>
+
                         </div>
 
                     </div>
@@ -49,84 +103,121 @@ shuffle($data);
 
 </div>
 
-<style>
-
-.memory-grid{
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fit,minmax(120px,1fr));
-
-    gap:18px;
-}
-
-.memory-card{
-    height:120px;
-
-    perspective:1000px;
-
-    cursor:pointer;
-}
-
-.memory-inner{
-    width:100%;
-    height:100%;
-
-    position:relative;
-
-    transform-style:preserve-3d;
-
-    transition:0.5s;
-}
-
-.memory-card.flipped .memory-inner{
-    transform:rotateY(180deg);
-}
-
-.memory-front,
-.memory-back{
-    position:absolute;
-
-    inset:0;
-
-    border-radius:18px;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    font-size:32px;
-    font-weight:800;
-
-    backface-visibility:hidden;
-}
-
-.memory-front{
-    background:#1e293b;
-}
-
-.memory-back{
-    background:var(--primary);
-
-    transform:rotateY(180deg);
-}
-
-</style>
-
 <script>
 
-document
-.querySelectorAll(".memory-card")
-.forEach(card => {
+const memoryCards =
+document.querySelectorAll(
+    ".memory-card"
+);
+
+const correctSound =
+new Audio(
+"assets/sounds/correct.mp3"
+);
+
+const wrongSound =
+new Audio(
+"assets/sounds/wrong.mp3"
+);
+
+let opened = [];
+
+let lockBoard = false;
+
+memoryCards.forEach(card => {
 
     card.onclick = () => {
 
-        card.classList.toggle(
+        if(lockBoard) return;
+
+        if(card.classList.contains(
+            "matched"
+        )) return;
+
+        card.classList.add(
             "flipped"
         );
+
+        opened.push(card);
+
+        if(opened.length === 2){
+
+            checkCards();
+
+        }
 
     };
 
 });
+
+function checkCards(){
+
+    lockBoard = true;
+
+    const first =
+    opened[0];
+
+    const second =
+    opened[1];
+
+    if(
+        first.dataset.value ===
+        second.dataset.value
+    ){
+
+        first.classList.add(
+            "matched"
+        );
+
+        second.classList.add(
+            "matched"
+        );
+
+        correctSound.play();
+
+        resetBoard();
+
+    }else{
+
+        wrongSound.play();
+
+        setTimeout(() => {
+
+            first.classList.remove(
+                "flipped"
+            );
+
+            second.classList.remove(
+                "flipped"
+            );
+
+            resetBoard();
+
+        }, 900);
+
+    }
+
+}
+
+function resetBoard(){
+
+    opened = [];
+
+    lockBoard = false;
+
+}
+
+let memoryTime = 0;
+
+setInterval(() => {
+
+    memoryTime++;
+
+    document.getElementById(
+        "memoryTimer"
+    ).innerHTML =
+    memoryTime + "s";
+
+}, 1000);
 
 </script>

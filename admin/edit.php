@@ -57,6 +57,26 @@ include 'admin_header.php';
                               class="form-control mt-2"
                               placeholder="Description"><?= htmlspecialchars($content['description']) ?></textarea>
 
+
+
+                    <!-- Is_published -->
+       
+
+              <input class="form-check-input"
+                type="checkbox"
+                name="is_published"
+                <?= ((int)$content['is_published']) === 1 ? 'checked' : '' ?>>
+
+               <?php if(((int)$content['is_published']) === 1): ?>
+                
+                <label class="form-check-label">
+                    Published
+                </label>
+
+                <?php endif; ?>
+
+        
+
                     <button type="button" id="addQuestion"
                             class="btn btn-primary-custom mt-3 w-100">
                         + Add Question

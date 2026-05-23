@@ -1,170 +1,81 @@
 <?php
 
-$data = json_decode(
-    $content['data_json'],
-    true
-);
-
-$settings = json_decode(
-    $content['settings_json'],
-    true
-);
+$data = $data ?? [];
 
 ?>
 
-<div class="play-page">
+<div class="game-card">
 
-    <div class="play-topbar">
+    <div class="progress-wrapper">
 
-        <div class="topbar-left">
-
-            <button class="back-btn"
-            id="leaveGameBtn">
-
-                <i class="bi bi-arrow-left"></i>
-
-            </button>
-
-            <div>
-
-                <div class="game-title">
-                    <?= $content['content_title'] ?>
-                </div>
-
-                <div class="game-description">
-                    <?= $content['description'] ?>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="topbar-right">
-
-            <div class="timer-box"
-            id="timerBox">
-
-                60
-
-            </div>
-
-        </div>
+        <div class="progress-bar"
+        id="progressBar"></div>
 
     </div>
 
-    <div class="game-wrapper">
+    <div class="quiz-question-count"
+    id="questionCount">
 
-        <div class="game-card">
-
-            <div class="progress-wrapper">
-
-                <div class="progress-bar"
-                id="progressBar"></div>
-
-            </div>
-
-            <div class="question-counter"
-            id="questionCounter">
-
-                Question 1 / <?= count($data) ?>
-
-            </div>
-
-            <div class="question-title"
-            id="questionTitle"></div>
-
-            <div class="options-grid"
-            id="optionsGrid"></div>
-
-        </div>
+        Question 1 /
+        <?= count($data) ?>
 
     </div>
 
-</div>
+    <h2 class="quiz-question"
+    id="questionTitle"></h2>
 
-<!-- Leave Modal -->
-
-<div class="leave-modal"
-id="leaveModal">
-
-    <div class="leave-card">
-
-        <div class="leave-icon">
-
-            <i class="bi bi-box-arrow-left"></i>
-
-        </div>
-
-        <h2>Leave Game?</h2>
-
-        <p class="text-muted">
-            Your current progress may be lost.
-        </p>
-
-        <div class="leave-actions">
-
-            <button
-            class="btn btn-secondary"
-            id="continueBtn">
-
-                Continue
-
-            </button>
-
-            <button
-            class="btn btn-danger"
-            id="confirmLeaveBtn">
-
-                Leave
-
-            </button>
-
-        </div>
-
-    </div>
+    <div class="quiz-options"
+    id="optionsBox"></div>
 
 </div>
 
 <script>
 
 const quizData =
-<?= json_encode($data) ?>;
+window.gameContent.data;
 
-const contentId =
-<?= $content['content_id'] ?>;
+const engine =
+new GameEngine({
 
-const engine = new GameEngine({
-    data: quizData
+    data: quizData,
+    settings:
+    window.gameContent.settings
+
 });
 
 let current = 0;
 
 function renderQuestion(){
 
-    const q = quizData[current];
+    const q =
+    quizData[current];
 
     document.getElementById(
-        "questionCounter"
+        "questionCount"
     ).innerText =
     `Question ${current + 1} / ${quizData.length}`;
 
     document.getElementById(
         "questionTitle"
-    ).innerText = q.question;
+    ).innerText =
+    q.question;
 
-    const optionsGrid =
+    const optionsBox =
     document.getElementById(
-        "optionsGrid"
+        "optionsBox"
     );
 
-    optionsGrid.innerHTML = "";
+    optionsBox.innerHTML = "";
 
     q.options.forEach(option => {
 
         const btn =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
-        btn.className = "option-btn";
+        btn.className =
+        "quiz-option-btn";
 
         btn.innerHTML = `
         <span>${option}</span>
@@ -172,9 +83,13 @@ function renderQuestion(){
         `;
 
         btn.onclick = () =>
-        selectAnswer(btn, q, option);
+        selectAnswer(
+            btn,
+            q,
+            option
+        );
 
-        optionsGrid.appendChild(btn);
+        optionsBox.appendChild(btn);
 
     });
 
@@ -182,27 +97,37 @@ function renderQuestion(){
 
 }
 
-function selectAnswer(btn, q, selected){
+function selectAnswer(
+    btn,
+    q,
+    option
+){
 
     const isCorrect =
     engine.answer(
         q.question,
-        selected,
+        option,
         q.answer
     );
 
     if(isCorrect){
 
-        btn.classList.add("correct");
+        btn.classList.add(
+            "correct"
+        );
 
     }else{
 
-        btn.classList.add("wrong");
+        btn.classList.add(
+            "wrong"
+        );
 
     }
 
     document
-    .querySelectorAll(".option-btn")
+    .querySelectorAll(
+        ".quiz-option-btn"
+    )
     .forEach(el => {
 
         el.disabled = true;
@@ -215,8 +140,7 @@ function selectAnswer(btn, q, selected){
 
         if(current >= quizData.length){
 
-            finishGame();
-
+            finishQuiz();
             return;
         }
 
@@ -236,20 +160,23 @@ function updateProgress(){
     ).style.width =
     progress + "%";
 
+    document.getElementById(
+        "progressText"
+    ).innerText =
+    progress + "%";
+
 }
 
-async function finishGame(){
+async function finishQuiz(){
 
     const player =
-    prompt("Enter your name");
+    prompt(
+        "Enter your name"
+    ) || "Guest";
 
     const result =
-    engine.result(
-        contentId,
-        player || "Guest"
-    );
+    engine.result(player);
 
-    const response =
     await fetch(
         "api/save-result.php",
         {
@@ -260,22 +187,25 @@ async function finishGame(){
                 "application/json"
             },
 
-            body:JSON.stringify(result)
+            body:
+            JSON.stringify(result)
         }
     );
 
-    const data =
-    await response.json();
-
     const form =
-    document.createElement("form");
+    document.createElement(
+        "form"
+    );
 
     form.method = "POST";
 
-    form.action = "result.php";
+    form.action =
+    "result.php";
 
     const input =
-    document.createElement("input");
+    document.createElement(
+        "input"
+    );
 
     input.type = "hidden";
 
@@ -286,53 +216,14 @@ async function finishGame(){
 
     form.appendChild(input);
 
-    document.body.appendChild(form);
+    document.body.appendChild(
+        form
+    );
 
     form.submit();
 
 }
 
 renderQuestion();
-
-/* =========================
-   Leave Modal
-========================= */
-
-const leaveBtn =
-document.getElementById(
-    "leaveGameBtn"
-);
-
-const leaveModal =
-document.getElementById(
-    "leaveModal"
-);
-
-leaveBtn.onclick = () => {
-
-    leaveModal.classList.add(
-        "active"
-    );
-
-};
-
-document.getElementById(
-    "continueBtn"
-).onclick = () => {
-
-    leaveModal.classList.remove(
-        "active"
-    );
-
-};
-
-document.getElementById(
-    "confirmLeaveBtn"
-).onclick = () => {
-
-    window.location.href =
-    "index.php";
-
-};
 
 </script>

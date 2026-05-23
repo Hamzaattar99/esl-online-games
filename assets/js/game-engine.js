@@ -1,9 +1,12 @@
-class GameEngine {
+class GameEngine{
 
-    constructor(config){
+    constructor(config = {}){
 
-        this.data = config.data || [];
-        this.settings = config.settings || {};
+        this.data =
+        config.data || [];
+
+        this.settings =
+        config.settings || {};
 
         this.current = 0;
 
@@ -15,29 +18,41 @@ class GameEngine {
 
         this.answers = [];
 
-        this.startTime = Date.now();
+        this.startTime =
+        Date.now();
 
     }
 
     answer(question, selected, correct){
 
-        const isCorrect = selected === correct;
+        const isCorrect =
+        selected === correct;
 
         this.answers.push({
+
             question,
             selected,
             correct,
             isCorrect
+
         });
 
         if(isCorrect){
 
-            this.score += 10;
             this.correct++;
+            this.score += 10;
+
+            this.playSound(
+                "correct"
+            );
 
         }else{
 
             this.wrong++;
+
+            this.playSound(
+                "wrong"
+            );
 
         }
 
@@ -47,36 +62,72 @@ class GameEngine {
 
     }
 
+    playSound(type){
+
+        try{
+
+            const audio =
+            new Audio(
+                type === "correct"
+                ? "assets/sounds/correct.mp3"
+                : "assets/sounds/wrong.mp3"
+            );
+
+            audio.volume = 0.4;
+
+            audio.play();
+
+        }catch(err){}
+    }
+
     progress(){
 
-        return (
-            this.current /
-            this.data.length
-        ) * 100;
+        return Math.floor(
+            (
+                this.current /
+                this.data.length
+            ) * 100
+        );
 
     }
 
-    result(contentId, playerName){
+    getElapsedTime(){
+
+        return Math.floor(
+            (
+                Date.now() -
+                this.startTime
+            ) / 1000
+        );
+
+    }
+
+    result(playerName = "Guest"){
 
         return {
 
-            content_id: contentId,
+            content_id:
+            window.gameContent.id,
 
-            player_name: playerName,
+            player_name:
+            playerName,
 
-            score: this.score,
+            score:
+            this.score,
 
-            correct: this.correct,
+            correct_answers:
+            this.correct,
 
-            wrong: this.wrong,
+            wrong_answers:
+            this.wrong,
 
-            total: this.data.length,
-
-            time_taken: Math.floor(
-                (Date.now() - this.startTime) / 1000
+            answers_json:
+            JSON.stringify(
+                this.answers
             ),
 
-            answers: this.answers
+            time_taken:
+            this.getElapsedTime()
 
         };
 
